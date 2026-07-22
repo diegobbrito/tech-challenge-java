@@ -21,13 +21,13 @@ public class UserRepositoryImp implements UserRepository {
             .sql("""
                     SELECT
                         id,
-                        nome AS name,
+                        name AS name,
                         email AS email,
-                        usuario_login AS userLogin,
-                        senha AS password,
-                        data_ultima_alteracao AS lastModifiedDate,
-                        endereco AS address,
-                        tipo_usuario AS userType
+                        user_login AS userLogin,
+                        password AS password,
+                        last_modified_date AS lastModifiedDate,
+                        address AS address,
+                        user_type AS userType
                     FROM usuario WHERE id = :id
                     """
             )
@@ -42,13 +42,13 @@ public class UserRepositoryImp implements UserRepository {
             .sql("""
                     SELECT
                         id,
-                        nome AS name,
-                        email AS email,
-                        usuario_login AS userLogin,
-                        senha AS password,
-                        data_ultima_alteracao AS lastModifiedDate,
-                        endereco AS address,
-                        tipo_usuario AS userType
+                        name,
+                        email,
+                        user_login AS userLogin,
+                        password,
+                        last_modified_date AS lastModifiedDate,
+                        address,
+                        user_type AS userType
                     FROM usuario LIMIT :size OFFSET :offset
                     """
             )
@@ -62,15 +62,15 @@ public class UserRepositoryImp implements UserRepository {
     public Integer save(User user) {
         return this.jdbcClient
             .sql("""
-                    INSERT INTO usuario (nome, email, usuario_login, senha, endereco, tipo_usuario)
-                    VALUES (:nome, :email, :usuario_login, :senha, :endereco, :tipo_usuario)
+                    INSERT INTO usuario (name, email, user_login, password, address, user_type)
+                    VALUES (:name, :email, :user_login, :password, :address, :user_type)
                     """)
-            .param("nome", user.getName())
+            .param("name", user.getName())
             .param("email", user.getEmail())
-            .param("usuario_login", user.getUserLogin())
-            .param("senha", user.getPassword())
-            .param("endereco", user.getAddress())
-            .param("tipo_usuario", user.getUserType())
+            .param("user_login", user.getUserLogin())
+            .param("password", user.getPassword())
+            .param("address", user.getAddress())
+            .param("user_type", user.getUserType())
             .update();
     }
 
@@ -79,22 +79,22 @@ public class UserRepositoryImp implements UserRepository {
         return this.jdbcClient
             .sql("""
                     UPDATE usuario SET
-                    nome = :nome,
+                    name = :name,
                     email = :email,
-                    usuario_login = :usuario_login,
-                    senha = :senha,
-                    endereco = :endereco,
-                    tipo_usuario = :tipo_usuario
+                    user_login = :user_login,
+                    password = :password,
+                    address = :address,
+                    user_type = :user_type
                     WHERE id = :id
                     """
             )
             .param("id", id)
-            .param("nome", user.getName())
+            .param("name", user.getName())
             .param("email", user.getEmail())
-            .param("usuario_login", user.getUserLogin())
-            .param("senha", user.getPassword())
-            .param("endereco", user.getAddress())
-            .param("tipo_usuario", user.getUserType())
+            .param("user_login", user.getUserLogin())
+            .param("password", user.getPassword())
+            .param("address", user.getAddress())
+            .param("user_type", user.getUserType())
             .update();
     }
 

@@ -3,6 +3,7 @@ package br.com.techchallenge.techchallenge.services;
 import br.com.techchallenge.techchallenge.dtos.UserRequestDTO;
 import br.com.techchallenge.techchallenge.entities.User;
 import br.com.techchallenge.techchallenge.repositories.UserRepository;
+import br.com.techchallenge.techchallenge.services.exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -19,11 +20,18 @@ public class UserService {
 
     public List<User> findAllUser(int page, int size) {
         int offset = (page - 1) * size;
-        return this.userRepository.findAll(size, offset);
+        List<User> users = this.userRepository.findAll(size, offset);
+
+        if (users.isEmpty()) {
+            throw new ResourceNotFoundException("Nenhum usuário encontrado");
+        }
+
+        return users;
     }
 
     public Optional<User> findUserById(Long id){
-        return this.userRepository.findById(id);
+        return Optional.of(this.userRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Usuário por ID não encontrado!")));
     }
 
     public void saveUser(UserRequestDTO requestDTO) {
