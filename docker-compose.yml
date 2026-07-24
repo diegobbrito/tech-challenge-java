@@ -1,0 +1,41 @@
+services:
+  techchallengedb:
+    image: "postgres:15-alpine"
+    container_name: techchallenge_db
+    restart: always
+    environment:
+      POSTGRES_DB: '${DB_DATABASE}'
+      POSTGRES_USER: '${DB_USER}'
+      POSTGRES_PASSWORD: '${DB_PASSWORD}'
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - techchallenge-network
+
+  techchallengeapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: techchallenge_app
+    ports:
+      - "8080:8080"
+    environment:
+      - spring.datasource.url=jdbc:postgresql://techchallengedb:${DB_PORT}/${DB_DATABASE}
+      - spring.datasource.username=${DB_USER}
+      - spring.datasource.password=${DB_PASSWORD}
+      - spring.datasource.driver-class-name=org.postgresql.Driver
+      - spring.sql.init.mode=never
+    depends_on:
+      - techchallengedb
+    networks:
+      - techchallenge-network
+
+networks:
+  techchallenge-network:
+    driver: bridge
+
+volumes:
+  pgdata:
