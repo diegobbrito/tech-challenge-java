@@ -28,7 +28,7 @@ public class UserRepositoryImp implements UserRepository {
                         last_modified_date AS lastModifiedDate,
                         address AS address,
                         user_type AS userType
-                    FROM usuario WHERE id = :id
+                    FROM users WHERE id = :id
                     """
             )
             .param("id", id)
@@ -49,7 +49,7 @@ public class UserRepositoryImp implements UserRepository {
                         last_modified_date AS lastModifiedDate,
                         address,
                         user_type AS userType
-                    FROM usuario LIMIT :size OFFSET :offset
+                    FROM users LIMIT :size OFFSET :offset
                     """
             )
             .param("size", size)
@@ -62,7 +62,7 @@ public class UserRepositoryImp implements UserRepository {
     public Integer save(User user) {
         return this.jdbcClient
             .sql("""
-                    INSERT INTO usuario (name, email, user_login, password, address, user_type)
+                    INSERT INTO users (name, email, user_login, password, address, user_type)
                     VALUES (:name, :email, :user_login, :password, :address, :user_type)
                     """)
             .param("name", user.getName())
@@ -78,7 +78,7 @@ public class UserRepositoryImp implements UserRepository {
     public Integer update(User user, Long id) {
         return this.jdbcClient
             .sql("""
-                    UPDATE usuario SET
+                    UPDATE users SET
                     name = :name,
                     email = :email,
                     user_login = :user_login,
@@ -102,7 +102,7 @@ public class UserRepositoryImp implements UserRepository {
     public Integer delete(Long id) {
         return this.jdbcClient
                 .sql("""
-                        DELETE FROM usuario WHERE id = :id
+                        DELETE FROM users WHERE id = :id
                         """)
                 .param("id", id)
                 .update();

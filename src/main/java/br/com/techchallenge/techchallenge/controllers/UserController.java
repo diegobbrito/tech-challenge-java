@@ -29,8 +29,8 @@ public class UserController {
             @RequestParam("size") int size
     ) {
         logger.info("GET -> /users");
-        var userService = this.userService.findAllUser(page, size);
-        return ResponseEntity.ok(userService);
+        var listUsers = this.userService.findAllUser(page, size);
+        return ResponseEntity.ok(listUsers);
     }
 
     @GetMapping("/{id}")
@@ -38,8 +38,8 @@ public class UserController {
             @PathVariable("id") Long id
     ) {
         logger.info("GET -> /users/{id}", id);
-        var userService = this.userService.findUserById(id);
-        return ResponseEntity.ok(userService);
+        var listUser = this.userService.findUserById(id);
+        return ResponseEntity.ok(listUser);
     }
 
     @PostMapping
