@@ -4,6 +4,7 @@ import br.com.techchallenge.techchallenge.dtos.UserRequestDTO;
 import br.com.techchallenge.techchallenge.entities.User;
 import br.com.techchallenge.techchallenge.repositories.UserRepository;
 import br.com.techchallenge.techchallenge.services.exceptions.ResourceNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -14,8 +15,11 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-    public UserService(UserRepository userRepository) {
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<User> findAllUser(int page, int size) {
@@ -36,11 +40,13 @@ public class UserService {
 
     public void saveUser(UserRequestDTO requestDTO) {
         User userEntity = new User(requestDTO);
+        userEntity.setPassword(passwordEncoder.encode(requestDTO.password()));
         var save = this.userRepository.save(userEntity);
         Assert.state(save == 1, "Erro ao salvar usuário: " + requestDTO.name());
     }
 
     public void updateUser(User user, Long id){
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         var update = this.userRepository.update(user, id);
         if (update == 0) {
             throw new RuntimeException("Usuário não encontrado");

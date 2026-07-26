@@ -16,17 +16,37 @@ public class UserRepositoryImp implements UserRepository {
     }
 
     @Override
+    public Optional<User> findByUserLogin(String userLogin) {
+        return this.jdbcClient
+                .sql("""
+                SELECT
+                    id,
+                    name,
+                    email,
+                    user_login AS userLogin,
+                    password,
+                    last_modified_date AS lastModifiedDate,
+                    address,
+                    user_type AS userType
+                FROM users WHERE user_login = :userLogin
+                """)
+                .param("userLogin", userLogin)
+                .query(User.class)
+                .optional();
+    }
+
+    @Override
     public Optional<User> findById(Long id) {
         return this.jdbcClient
             .sql("""
                     SELECT
                         id,
-                        name AS name,
-                        email AS email,
+                        name,
+                        email,
                         user_login AS userLogin,
-                        password AS password,
+                        password,
                         last_modified_date AS lastModifiedDate,
-                        address AS address,
+                        address,
                         user_type AS userType
                     FROM users WHERE id = :id
                     """
