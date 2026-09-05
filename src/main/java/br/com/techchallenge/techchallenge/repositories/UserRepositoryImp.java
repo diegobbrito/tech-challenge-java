@@ -19,17 +19,17 @@ public class UserRepositoryImp implements UserRepository {
     public Optional<User> findByUserLogin(String userLogin) {
         return this.jdbcClient
                 .sql("""
-                SELECT
-                    id,
-                    name,
-                    email,
-                    user_login AS userLogin,
-                    password,
-                    last_modified_date AS lastModifiedDate,
-                    address,
-                    user_type AS userType
-                FROM users WHERE user_login = :userLogin
-                """)
+                        SELECT
+                            id,
+                            name,
+                            email,
+                            user_login AS userLogin,
+                            password,
+                            last_modified_date AS lastModifiedDate,
+                            address,
+                            user_type AS userType
+                        FROM users WHERE user_login = :userLogin
+                        """)
                 .param("userLogin", userLogin)
                 .query(User.class)
                 .optional();
