@@ -27,39 +27,38 @@ public class UserService {
         List<User> users = this.userRepository.findAll(size, offset);
 
         if (users.isEmpty()) {
-            throw new ResourceNotFoundException("Nenhum usuário encontrado");
+            throw new ResourceNotFoundException("No users found");
         }
 
         return users;
     }
 
-    public Optional<User> findUserById(Long id){
+    public Optional<User> findUserById(Long id) {
         return Optional.of(this.userRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Usuário por ID não encontrado!")));
+                .orElseThrow(() -> new ResourceNotFoundException("User by ID not found!")));
     }
 
     public void saveUser(UserRequestDTO requestDTO) {
         User userEntity = new User(requestDTO);
         userEntity.setPassword(passwordEncoder.encode(requestDTO.password()));
         var save = this.userRepository.save(userEntity);
-        Assert.state(save == 1, "Erro ao salvar usuário: " + requestDTO.name());
+        Assert.state(save == 1, "Error saving user: " + requestDTO.name());
     }
 
-    public void updateUser(User user, Long id){
+    public void updateUser(User user, Long id) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         var update = this.userRepository.update(user, id);
         if (update == 0) {
-            throw new RuntimeException("Usuário não encontrado");
+            throw new RuntimeException("User not found");
         }
     }
 
-    public void deleteUser(Long id){
+    public void deleteUser(Long id) {
         var delete = this.userRepository.delete(id);
         if (delete == 0) {
-            throw new RuntimeException("Usuário nao encontrado");
+            throw new RuntimeException("User not found");
         }
     }
-
 
 
 }
