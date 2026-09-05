@@ -2,6 +2,7 @@ package br.com.techchallenge.techchallenge.security;
 
 import br.com.techchallenge.techchallenge.controllers.UserController;
 import br.com.techchallenge.techchallenge.repositories.UserRepository;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -17,18 +18,18 @@ import java.util.List;
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
 
     public CustomUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        logger.info("Tentando autenticar o usuário: {}", username);
+    public @NonNull UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
+        logger.info("Trying to authenticate user: {}", username);
 
         var appUser = userRepository.findByUserLogin(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + username));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
         String role = appUser.getUserType() != null ? appUser.getUserType().toUpperCase() : "USER";
         String prefixedRole = role.startsWith("ROLE_") ? role : "ROLE_" + role;
