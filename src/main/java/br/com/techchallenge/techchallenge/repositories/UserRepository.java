@@ -1,22 +1,26 @@
 package br.com.techchallenge.techchallenge.repositories;
 
 import br.com.techchallenge.techchallenge.entities.User;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
-public interface UserRepository {
+@Repository
+public class UserRepository implements IUserRepository {
 
-    Optional<User> findByUserLogin(String userLogin);
+    JpaUserRepository repository;
 
-    Optional<User> findById(Long id);
+    public UserRepository(JpaUserRepository repository) {
+        this.repository = repository;
+    }
 
-    List<User> findAll(int size, int offset);
+    @Override
+    public Optional<User> findByUserLogin(String userLogin) {
+        return this.repository.findByUserLogin(userLogin);
+    }
 
-    Integer save(User user);
-
-    Integer update(User user, Long id);
-
-    Integer delete(Long id);
-
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return this.repository.findByEmail(email);
+    }
 }
