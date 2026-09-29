@@ -8,10 +8,15 @@ import java.util.Optional;
 @Repository
 public class UserRepository implements IUserRepository {
 
-    JpaUserRepository repository;
+    private final JpaUserRepository repository;
 
     public UserRepository(JpaUserRepository repository) {
         this.repository = repository;
+    }
+
+    @Override
+    public Optional<User> findById(Long id) {
+        return this.repository.findById(id);
     }
 
     @Override
@@ -23,4 +28,16 @@ public class UserRepository implements IUserRepository {
     public Optional<User> findByEmail(String email) {
         return this.repository.findByEmail(email);
     }
+
+    @Override
+    public User save(User user) {
+        return this.repository.save(user);
+    }
+
+    @Override
+    public Void delete(User user) {
+        this.repository.delete(user);
+        return null;
+    }
+
 }
