@@ -1,20 +1,22 @@
 package br.com.techchallenge.techchallenge.services;
 
+import br.com.techchallenge.techchallenge.enumerator.UserType;
 import br.com.techchallenge.techchallenge.dtos.UserRequestDTO;
 import br.com.techchallenge.techchallenge.entities.User;
+import br.com.techchallenge.techchallenge.repositories.IUserRepository;
 import br.com.techchallenge.techchallenge.repositories.UserRepository;
 import br.com.techchallenge.techchallenge.services.exceptions.ResourceNotFoundException;
+import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
+    private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
@@ -22,43 +24,44 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public List<User> findAllUser(int page, int size) {
-        int offset = (page - 1) * size;
-        List<User> users = this.userRepository.findAll(size, offset);
+    public Page<User> findAllUser(int page, int size) {
 
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<User> users = this.userRepository.findAll(pageable);
         if (users.isEmpty()) {
             throw new ResourceNotFoundException("No users found");
         }
-
         return users;
     }
 
-    public Optional<User> findUserById(Long id) {
-        return Optional.of(this.userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User by ID not found!")));
+    public User findUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User by ID not found!"));
     }
 
-    public void saveUser(UserRequestDTO requestDTO) {
-        User userEntity = new User(requestDTO);
-        userEntity.setPassword(passwordEncoder.encode(requestDTO.password()));
-        var save = this.userRepository.save(userEntity);
-        Assert.state(save == 1, "Error saving user: " + requestDTO.name());
+    @Transactional
+    public User saveUser(UserRequestDTO requestDTO) {
+        User user = new User(requestDTO);
+        user.setPassword(passwordEncoder.encode(requestDTO.password()));
+        return userRepository.save(user);
     }
 
-    public void updateUser(User user, Long id) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        var update = this.userRepository.update(user, id);
-        if (update == 0) {
-            throw new RuntimeException("User not found");
+    @Transactional
+    public User updateUser(UserRequestDTO requestDTO, Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        user.setName(requestDTO.name());
+        user.setEmail(requestDTO.email());
+        user.setUserLogin(requestDTO.userLogin());
+        user.setAddress(requestDTO.address());
+        user.setUserType(UserType.valueOf(requestDTO.userType().toUpperCase()));
+        if (requestDTO.password() != null && !requestDTO.password().isBlank()) {
+            user.setPassword(passwordEncoder.encode(requestDTO.password()));
         }
+        return user;
     }
 
+    @Transactional
     public void deleteUser(Long id) {
-        var delete = this.userRepository.delete(id);
-        if (delete == 0) {
-            throw new RuntimeException("User not found");
-        }
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        userRepository.delete(user);
     }
-
-
 }

@@ -1,6 +1,8 @@
 package br.com.techchallenge.techchallenge.repositories;
 
 import br.com.techchallenge.techchallenge.entities.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -35,9 +37,13 @@ public class UserRepository implements IUserRepository {
     }
 
     @Override
-    public Void delete(User user) {
+    public void delete(User user) {
         this.repository.delete(user);
-        return null;
+    }
+
+    @Override
+    public Page<User> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
 }
