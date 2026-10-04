@@ -1,22 +1,49 @@
 package br.com.techchallenge.techchallenge.repositories;
 
 import br.com.techchallenge.techchallenge.entities.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
-public interface UserRepository {
+@Repository
+public class UserRepository implements IUserRepository {
 
-    Optional<User> findByUserLogin(String userLogin);
+    private final JpaUserRepository repository;
 
-    Optional<User> findById(Long id);
+    public UserRepository(JpaUserRepository repository) {
+        this.repository = repository;
+    }
 
-    List<User> findAll(int size, int offset);
+    @Override
+    public Optional<User> findById(Long id) {
+        return this.repository.findById(id);
+    }
 
-    Integer save(User user);
+    @Override
+    public Optional<User> findByUserLogin(String userLogin) {
+        return this.repository.findByUserLogin(userLogin);
+    }
 
-    Integer update(User user, Long id);
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return this.repository.findByEmail(email);
+    }
 
-    Integer delete(Long id);
+    @Override
+    public User save(User user) {
+        return this.repository.save(user);
+    }
+
+    @Override
+    public void delete(User user) {
+        this.repository.delete(user);
+    }
+
+    @Override
+    public Page<User> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
+    }
 
 }
