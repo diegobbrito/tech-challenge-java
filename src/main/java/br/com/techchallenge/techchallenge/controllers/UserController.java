@@ -4,6 +4,7 @@ import br.com.techchallenge.techchallenge.dtos.UserRequestDTO;
 import br.com.techchallenge.techchallenge.entities.User;
 import br.com.techchallenge.techchallenge.services.UserService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,14 +22,14 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> findAllUser(@RequestParam("page") int page,
+    public ResponseEntity<Page<User>> findAllUser(@RequestParam("page") int page,
                                                   @RequestParam("size") int size) {
         var listUsers = this.userService.findAllUser(page, size);
         return ResponseEntity.ok(listUsers);
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<Optional<User>> findUserById(@PathVariable("id") Long id) {
+    public ResponseEntity<User> findUserById(@PathVariable("id") Long id) {
         var listUser = this.userService.findUserById(id);
         return ResponseEntity.ok(listUser);
     }
@@ -36,12 +37,12 @@ public class UserController {
     @PostMapping("/users")
     public ResponseEntity<Void> saveUser(@Valid @RequestBody UserRequestDTO userDTO) {
         this.userService.saveUser(userDTO);
-        return ResponseEntity.status(201).build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping("/users/{id}")
     public ResponseEntity<Void> updateUser(@PathVariable("id") Long id,
-                                           @RequestBody User user) {
+                                           @RequestBody UserRequestDTO user) {
         this.userService.updateUser(user, id);
         var status = HttpStatus.NO_CONTENT;
         return ResponseEntity.status(status.value()).build();

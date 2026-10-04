@@ -1,7 +1,6 @@
 package br.com.techchallenge.techchallenge.security;
 
-import br.com.techchallenge.techchallenge.controllers.UserController;
-import br.com.techchallenge.techchallenge.repositories.UserRepository;
+import br.com.techchallenge.techchallenge.repositories.IUserRepository;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,10 +16,10 @@ import java.util.List;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final IUserRepository userRepository;
     private static final Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
 
-    public CustomUserDetailsService(UserRepository userRepository) {
+    public CustomUserDetailsService(IUserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -31,7 +30,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         var appUser = userRepository.findByUserLogin(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-        String role = appUser.getUserType() != null ? appUser.getUserType().toUpperCase() : "USER";
+        String role = appUser.getUserType() != null ? appUser.getUserType().name() : "USER";
         String prefixedRole = role.startsWith("ROLE_") ? role : "ROLE_" + role;
 
         return new User(
