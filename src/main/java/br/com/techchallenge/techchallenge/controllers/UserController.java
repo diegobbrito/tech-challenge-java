@@ -24,33 +24,28 @@ public class UserController {
     @GetMapping("/users")
     public ResponseEntity<Page<User>> findAllUser(@RequestParam("page") int page,
                                                   @RequestParam("size") int size) {
-        var listUsers = this.userService.findAllUser(page, size);
-        return ResponseEntity.ok(listUsers);
+        return ResponseEntity.ok(userService.findAllUser(page, size));
     }
 
     @GetMapping("/users/{id}")
     public ResponseEntity<User> findUserById(@PathVariable("id") Long id) {
-        var listUser = this.userService.findUserById(id);
-        return ResponseEntity.ok(listUser);
+        return ResponseEntity.ok(userService.findUserById(id));
     }
 
     @PostMapping("/users")
-    public ResponseEntity<Void> saveUser(@Valid @RequestBody UserRequestDTO userDTO) {
-        this.userService.saveUser(userDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<User> saveUser(@Valid @RequestBody UserRequestDTO userDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.saveUser(userDTO));
     }
 
     @PutMapping("/users/{id}")
-    public ResponseEntity<Void> updateUser(@PathVariable("id") Long id,
+    public ResponseEntity<User> updateUser(@PathVariable("id") Long id,
                                            @RequestBody UserRequestDTO user) {
-        this.userService.updateUser(user, id);
-        var status = HttpStatus.NO_CONTENT;
-        return ResponseEntity.status(status.value()).build();
+        return ResponseEntity.ok(userService.updateUser(user, id));
     }
 
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
-        this.userService.deleteUser(id);
+        userService.deleteUser(id);
         return ResponseEntity.ok().build();
     }
 }
