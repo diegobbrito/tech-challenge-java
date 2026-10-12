@@ -1,7 +1,6 @@
 package br.com.techchallenge.techchallenge.services;
 
-
-import br.com.techchallenge.techchallenge.dtos.LoginRequest;
+import br.com.techchallenge.techchallenge.dtos.LoginRequestDTO;
 import br.com.techchallenge.techchallenge.dtos.UserRequestDTO;
 import br.com.techchallenge.techchallenge.entities.User;
 import br.com.techchallenge.techchallenge.repositories.UserRepository;
@@ -35,7 +34,7 @@ public class AuthenticationService {
         return userRepository.save(user);
     }
 
-    public User authenticate(LoginRequest input) {
+    public User authenticate(LoginRequestDTO input) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(input.username(), input.password()));
         return userRepository.findByUserLogin(input.username()).orElseThrow();
     }

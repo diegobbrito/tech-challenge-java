@@ -2,6 +2,7 @@ package br.com.techchallenge.techchallenge.security;
 
 import br.com.techchallenge.techchallenge.repositories.IUserRepository;
 import org.jspecify.annotations.NonNull;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -9,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
 
 import java.util.List;
 

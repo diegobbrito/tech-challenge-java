@@ -3,7 +3,6 @@ package br.com.techchallenge.techchallenge.controllers.handlers;
 import br.com.techchallenge.techchallenge.dtos.ResourceNotFoundDTO;
 import br.com.techchallenge.techchallenge.dtos.ValidationErrorDTO;
 import br.com.techchallenge.techchallenge.services.exceptions.ResourceNotFoundException;
-import jakarta.el.MethodNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
