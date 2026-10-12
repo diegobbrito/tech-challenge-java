@@ -1,8 +1,10 @@
 package br.com.techchallenge.techchallenge.services;
 
-import br.com.techchallenge.techchallenge.enumerator.UserType;
+import br.com.techchallenge.techchallenge.controllers.mappers.UserMapper;
 import br.com.techchallenge.techchallenge.dtos.UserRequestDTO;
+import br.com.techchallenge.techchallenge.dtos.UserResponseDTO;
 import br.com.techchallenge.techchallenge.entities.User;
+import br.com.techchallenge.techchallenge.enumerator.UserType;
 import br.com.techchallenge.techchallenge.repositories.IUserRepository;
 import br.com.techchallenge.techchallenge.repositories.UserRepository;
 import br.com.techchallenge.techchallenge.services.exceptions.ResourceNotFoundException;
@@ -24,44 +26,50 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Page<User> findAllUser(int page, int size) {
+    public Page<UserResponseDTO> findAllUser(int page, int size) {
 
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<User> users = this.userRepository.findAll(pageable);
         if (users.isEmpty()) {
             throw new ResourceNotFoundException("No users found");
         }
-        return users;
+        return users.map(UserMapper::toDTO);
     }
 
-    public User findUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User by ID not found!"));
+    public UserResponseDTO findUserById(Long id) {
+        return UserMapper.toDTO(userRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("User by ID not found!")));
     }
 
     @Transactional
-    public User saveUser(UserRequestDTO requestDTO) {
+    public UserResponseDTO saveUser(UserRequestDTO requestDTO) {
         User user = new User(requestDTO);
         user.setPassword(passwordEncoder.encode(requestDTO.password()));
-        return userRepository.save(user);
+        return UserMapper.toDTO(userRepository.save(user));
     }
 
     @Transactional
-    public User updateUser(UserRequestDTO requestDTO, Long id) {
+    public UserResponseDTO updateUser(UserRequestDTO requestDTO, Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         user.setName(requestDTO.name());
         user.setEmail(requestDTO.email());
         user.setUserLogin(requestDTO.userLogin());
         user.setAddress(requestDTO.address());
-        user.setUserType(UserType.valueOf(requestDTO.userType().toUpperCase()));
         if (requestDTO.password() != null && !requestDTO.password().isBlank()) {
             user.setPassword(passwordEncoder.encode(requestDTO.password()));
         }
-        return user;
+        return UserMapper.toDTO(userRepository.save(user));
     }
 
     @Transactional
     public void deleteUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         userRepository.delete(user);
+    }
+
+    public UserResponseDTO updateUserType(Long id, UserType userType) {
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        user.setUserType(userType);
+        return UserMapper.toDTO(userRepository.save(user));
     }
 }
