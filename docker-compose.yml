@@ -28,6 +28,7 @@ services:
       - spring.datasource.password=${DB_PASSWORD}
       - spring.datasource.driver-class-name=org.postgresql.Driver
       - spring.sql.init.mode=never
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
     depends_on:
       - techchallengedb
     networks:
