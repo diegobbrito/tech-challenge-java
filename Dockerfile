@@ -1,8 +1,6 @@
-# --- ESTÁGIO 1: Build da aplicação ---
 FROM eclipse-temurin:21-jdk-alpine AS build
 WORKDIR /app
 
-# Copia os arquivos de configuração do Maven e o wrapper
 COPY pom.xml .
 COPY .mvn .mvn
 COPY mvnw .
