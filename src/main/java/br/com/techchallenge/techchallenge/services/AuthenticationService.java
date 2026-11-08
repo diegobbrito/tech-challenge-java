@@ -3,6 +3,7 @@ package br.com.techchallenge.techchallenge.services;
 import br.com.techchallenge.techchallenge.dtos.LoginRequestDTO;
 import br.com.techchallenge.techchallenge.dtos.UserRequestDTO;
 import br.com.techchallenge.techchallenge.entities.User;
+import br.com.techchallenge.techchallenge.enumerator.UserType;
 import br.com.techchallenge.techchallenge.repositories.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,7 +29,10 @@ public class AuthenticationService {
         User user = User.builder()
                 .name(input.name())
                 .email(input.email())
+                .userLogin(input.userLogin())
+                .address(input.address())
                 .password(passwordEncoder.encode(input.password()))
+                .userType(UserType.USER)
                 .build();
 
         return userRepository.save(user);
